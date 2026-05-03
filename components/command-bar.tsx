@@ -4,7 +4,21 @@ import { Bot, Database, FolderOpen, Play, RefreshCw, Search } from "lucide-react
 import { openVault, refreshSystemStatus, runSkill, searchMemory, triggerAutomation } from "@/lib/actions";
 import { StatusPill } from "./status-pill";
 
-export function CommandBar({ search, onSearch, filter, onFilter }: { search: string; onSearch: (value: string) => void; filter: string; onFilter: (value: string) => void }) {
+export function CommandBar({
+  search,
+  onSearch,
+  filter,
+  onFilter,
+  lastSync,
+  onRefresh,
+}: {
+  search: string;
+  onSearch: (value: string) => void;
+  filter: string;
+  onFilter: (value: string) => void;
+  lastSync: string;
+  onRefresh: () => void;
+}) {
   const filters = ["All", "Active", "Needs Attention", "Local", "Cloud"];
 
   return (
@@ -19,7 +33,7 @@ export function CommandBar({ search, onSearch, filter, onFilter }: { search: str
           <div className="mt-2 flex flex-wrap gap-2 font-mono text-[11px] uppercase text-cyan-100/75">
             <span>Prometheus-1</span>
             <span>Ubuntu WSL2</span>
-            <span>Last sync: mock live</span>
+            <span>Last sync: {lastSync}</span>
           </div>
         </div>
 
@@ -29,15 +43,18 @@ export function CommandBar({ search, onSearch, filter, onFilter }: { search: str
               <Search size={16} className="shrink-0 text-cyan-100" />
               <input
                 value={search}
-                onChange={(event) => {
-                  onSearch(event.target.value);
-                  searchMemory(event.target.value);
-                }}
+                onChange={(event) => onSearch(event.target.value)}
                 placeholder="Search modules, agents, automations..."
                 className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
               />
             </label>
-            <button className="inline-flex items-center justify-center gap-2 border border-cyan-200/30 px-3 py-2 text-sm text-cyan-50 hover:bg-cyan-300/10" onClick={() => refreshSystemStatus()}>
+            <button
+              className="inline-flex items-center justify-center gap-2 border border-cyan-200/30 px-3 py-2 text-sm text-cyan-50 hover:bg-cyan-300/10"
+              onClick={() => {
+                refreshSystemStatus();
+                onRefresh();
+              }}
+            >
               <RefreshCw size={15} /> Refresh
             </button>
           </div>

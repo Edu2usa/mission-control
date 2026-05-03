@@ -31,9 +31,9 @@ npm run build
 
 ## Future Integration Points
 
-Mock data lives in `lib/mission-control-data.ts`.
+Seed dashboard data lives in `lib/mission-control-data.ts`.
 
-Placeholder actions live in `lib/actions.ts`:
+Client action handlers live in `lib/actions.ts`:
 
 - `triggerAutomation(id)`
 - `searchMemory(query)`

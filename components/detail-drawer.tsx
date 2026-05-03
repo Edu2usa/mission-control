@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { openAgent, openVault, runSkill, searchMemory, triggerAutomation } from "@/lib/actions";
 import type { Agent, Automation, SystemNode } from "@/lib/mission-control-data";
 import { StatusPill } from "./status-pill";
 
@@ -25,7 +26,18 @@ export function DetailDrawer({ target, onClose }: { target: DetailTarget; onClos
       ? target.item.details ?? target.item.tags
       : target.type === "agent"
         ? target.item.capabilities
-        : ["Run Now", "View history", "Edit schedule placeholder"];
+        : ["Run now", "View schedule", "Queue schedule review"];
+
+  const primaryAction =
+    target.type === "automation"
+      ? () => triggerAutomation(target.item.id)
+      : target.type === "agent"
+        ? () => openAgent(target.item.id)
+        : target.item.id === "obsidian-interface"
+          ? () => openVault()
+          : target.item.id === "hermes"
+            ? () => runSkill("hermes-control-plane")
+            : () => searchMemory(target.item.name);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/45" onClick={onClose}>
@@ -54,14 +66,23 @@ export function DetailDrawer({ target, onClose }: { target: DetailTarget; onClos
           ))}
         </div>
 
+        <div className="mt-6 grid grid-cols-2 gap-2">
+          <button className="border border-cyan-200/35 bg-cyan-300/10 px-3 py-2 text-sm text-cyan-50 hover:bg-cyan-300/15" onClick={primaryAction}>
+            Execute Action
+          </button>
+          <button className="border border-white/10 px-3 py-2 text-sm text-slate-200 hover:border-cyan-200/40" onClick={() => searchMemory(title)}>
+            Search Related
+          </button>
+        </div>
+
         <div className="mt-6 grid grid-cols-2 gap-3 text-xs">
           <div className="border border-cyan-200/15 p-3">
             <div className="font-mono uppercase text-slate-500">Last activity</div>
-            <div className="mt-1 text-cyan-100">mock: just now</div>
+            <div className="mt-1 text-cyan-100">Just now</div>
           </div>
           <div className="border border-cyan-200/15 p-3">
-            <div className="font-mono uppercase text-slate-500">Future source</div>
-            <div className="mt-1 text-cyan-100">Hermes Gateway</div>
+            <div className="font-mono uppercase text-slate-500">Connection</div>
+            <div className="mt-1 text-cyan-100">Hermes-ready</div>
           </div>
         </div>
       </aside>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ActionCenter } from "@/components/action-center";
 import { ArchitectureMap } from "@/components/architecture-map";
 import { AutomationPanel } from "@/components/automation-panel";
 import { CommandBar } from "@/components/command-bar";
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [target, setTarget] = useState<DetailTarget>(null);
+  const [lastSync, setLastSync] = useState("ready");
 
   const filteredNodes = useMemo(() => {
     return systemNodes.filter((node) => {
@@ -51,7 +53,14 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen px-3 py-4 text-white md:px-5 lg:px-7">
       <div className="mx-auto flex max-w-[1800px] flex-col gap-4">
-        <CommandBar search={search} onSearch={setSearch} filter={filter} onFilter={setFilter} />
+        <CommandBar
+          search={search}
+          onSearch={setSearch}
+          filter={filter}
+          onFilter={setFilter}
+          lastSync={lastSync}
+          onRefresh={() => setLastSync(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }))}
+        />
 
         <section className="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,.55fr)]">
           <div className="grid gap-4">
@@ -88,6 +97,7 @@ export default function Dashboard() {
       </div>
 
       <DetailDrawer target={target} onClose={() => setTarget(null)} />
+      <ActionCenter />
     </main>
   );
 }
